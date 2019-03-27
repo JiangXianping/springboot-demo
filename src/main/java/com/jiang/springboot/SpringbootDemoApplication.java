@@ -18,6 +18,9 @@ import org.springframework.context.annotation.ComponentScan;
  *      步骤：
  *          1、开启基于注解的缓存
  *          2、标注缓存即可
+ *              @Cacheable
+ *              @CacheEvict
+ *              @CachePut
  */
 @MapperScan("com.jiang.springboot.mapper")
 @SpringBootApplication
