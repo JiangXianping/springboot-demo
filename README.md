@@ -45,3 +45,21 @@ sync：是否使用异步模式 （unless不可用）
      *      核心
      *          1.使用CacheManager【ConcurrentCacheManager】按照名字得到Cache【ConcurrentMapCache】组件
      *          2.key使用keyGenerator生成的，默认是SimpleKeyGenerator
+     
+     ##@CachePut(value="emp",key = "#employee.id")
+     /**
+     * @CachePut: 既调用方法，又更新缓存数据；
+     * 修改了数据库的某个数据，同时更新缓存；
+     * 运行时机：
+     *      1.先调用目标方法
+     *      2.将目标方法的结果缓存起来
+     *      3.更新一号员工{"id":1,"lastName":"zhangsan","email":null,"gender":0,"dId":null}
+     *              将方法的返回叶放进缓存了
+     *              key：传入的employee对象   值：返回的employee对象
+     *      4.查询1号员工
+     *          应该是更新后的员工：
+     *              key = "#employee.id"：使用传入的参数的员工id
+     *              key = "#result.id"：使用返回后的id
+     *              @Cacheable 的key是不能用#result.id
+     *          为什么是没更新前的？
+     */
