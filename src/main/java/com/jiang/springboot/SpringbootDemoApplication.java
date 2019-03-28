@@ -21,6 +21,8 @@ import org.springframework.context.annotation.ComponentScan;
  *              @Cacheable
  *              @CacheEvict
  *              @CachePut
+ *  默认使用的是ConcurrentMapCacheManager==ConcurrentMapCache 将数据保存在ConcurrentMap<Object,Object>
+ *
  */
 @MapperScan("com.jiang.springboot.mapper")
 @SpringBootApplication

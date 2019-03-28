@@ -3,11 +3,10 @@ package com.jiang.springboot.service;
 import com.jiang.springboot.bean.Employee;
 import com.jiang.springboot.mapper.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 
+@CacheConfig(cacheNames = "emp") //抽取缓存的公共配置
 @Service
 public class EmployeeService {
 
@@ -109,8 +108,23 @@ public class EmployeeService {
      * beforeInvocation = false；缓存的清除是否在方法之前执行
      *      默认代表是在方法执行之后执行
      */
-    @CacheEvict(value = "emp",key = "#id",allEntries = true)
+    @CacheEvict(value = "emp",key = "#id"/*,allEntries = true,beforeInvocation = false*/)
     public void deleteEmp(Integer id){
         System.out.println("deleteEmp："+id);
+    }
+
+
+    // @Caching 定义复杂的缓存规则
+    @Caching(
+            cacheable = {
+                    @Cacheable(/*value = "emp",*/ key = "#lastName")
+            },
+            put = {
+                    @CachePut(/*value = "emp",*/key = "#result.id"),
+                    @CachePut(/*value = "emp",*/key = "#result.email")
+            }
+    )
+    public Employee getEmpByLastName(String lastName){
+        return employeeMapper.getEmpByLastName(lastName);
     }
 }
