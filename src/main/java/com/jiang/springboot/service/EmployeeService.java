@@ -3,6 +3,8 @@ package com.jiang.springboot.service;
 import com.jiang.springboot.bean.Employee;
 import com.jiang.springboot.mapper.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -71,10 +73,44 @@ public class EmployeeService {
      * @param id
      * @return
      */
-    @Cacheable(cacheNames = {"emp"},keyGenerator = "myKeyGenerator",condition = "#id>1",unless = "#a0==2")
+    @Cacheable(cacheNames = {"emp"}/*,keyGenerator = "myKeyGenerator",condition = "#id>1",unless = "#a0==2"*/)
     public Employee getEmp(Integer id){
         System.out.println("查询："+id+"号员工");
         Employee emp = employeeMapper.getEmpById(id);
         return  emp;
+    }
+
+    /**
+     * @CachePut: 既调用方法，又更新缓存数据；
+     * 修改了数据库的某个数据，同时更新缓存；
+     * 运行时机：
+     *      1.先调用目标方法
+     *      2.将目标方法的结果缓存起来
+     *      3.更新一号员工{"id":1,"lastName":"zhangsan","email":null,"gender":0,"dId":null}
+     *              将方法的返回叶放进缓存了
+     *              key：传入的employee对象   值：返回的employee对象
+     *      4.查询1号员工
+     *          应该是更新后的员工：
+     *              key = "#employee.id"：使用传入的参数的员工id
+     *              key = "#result.id"：使用返回后的id
+     *              @Cacheable 的key是不能用#result.id
+     *          为什么是没更新前的？
+     */
+    @CachePut(value="emp",key = "#employee.id")
+    public Employee updateEmp(Employee employee){
+        employeeMapper.updateEmp(employee);
+        return employee;
+    }
+
+    /**
+     * @CacheEvict:缓存清除
+     * key：指定要清除的数据
+     * allEntries = true 清除所有数据
+     * beforeInvocation = false；缓存的清除是否在方法之前执行
+     *      默认代表是在方法执行之后执行
+     */
+    @CacheEvict(value = "emp",key = "#id",allEntries = true)
+    public void deleteEmp(Integer id){
+        System.out.println("deleteEmp："+id);
     }
 }

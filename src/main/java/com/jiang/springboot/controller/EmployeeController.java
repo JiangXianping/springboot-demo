@@ -19,4 +19,17 @@ public class EmployeeController {
         Employee employee = employeeService.getEmp(id);
         return employee;
     }
+
+    @GetMapping("/emp")
+    public Employee update(Employee employee){
+        System.out.println("updateEmp"+employee);
+        Employee emp = employeeService.updateEmp(employee);
+        return emp;
+    }
+
+    @GetMapping("/delEmp/{id}")
+    public String deleteEmp(@PathVariable("id")Integer id){
+        employeeService.deleteEmp(id);
+        return "success";
+    }
 }
