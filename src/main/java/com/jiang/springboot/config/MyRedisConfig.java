@@ -1,13 +1,16 @@
 package com.jiang.springboot.config;
 
+import com.jiang.springboot.bean.Department;
 import com.jiang.springboot.bean.Employee;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
 import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 @Configuration
@@ -20,6 +23,27 @@ public class MyRedisConfig {
         Jackson2JsonRedisSerializer<Employee> ser = new Jackson2JsonRedisSerializer<Employee>(Employee.class);
         template.setDefaultSerializer(ser);
         return template;
+    }
+
+    @Bean
+    public RedisTemplate<Object, Department> deptRedisTemplate(
+            RedisConnectionFactory redisConnectionFactory)
+            throws UnknownHostException {
+        RedisTemplate<Object, Department> template = new RedisTemplate<Object, Department>();
+        template.setConnectionFactory(redisConnectionFactory);
+        Jackson2JsonRedisSerializer<Department> ser = new Jackson2JsonRedisSerializer<Department>(Department.class);
+        template.setDefaultSerializer(ser);
+        return template;
+    }
+
+    @Bean
+    public RedisCacheManager employeeCacheManager(RedisTemplate<Object,Employee> employeeRedisTemplate){
+        RedisCacheManager cacheManager = new RedisCacheManager(employeeRedisTemplate);
+        //key多了一个前缀
+        //使用前缀，默认使用cacheName作为前缀
+        cacheManager.setUsePrefix(true);
+
+        return cacheManager;
     }
 
 }
