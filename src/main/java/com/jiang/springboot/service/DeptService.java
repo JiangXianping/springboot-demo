@@ -5,6 +5,7 @@ import com.jiang.springboot.mapper.DepartmentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,7 @@ public class DeptService {
 //    }
 
     // 使用缓存管理器得到缓存，进行api调用
+    @Cacheable(cacheNames = "dept",cacheManager = "deptCacheManager")
     public Department getDeptById(Integer id){
         System.out.println("查询部门"+id);
         Department department = departmentMapper.getDeptById(id);

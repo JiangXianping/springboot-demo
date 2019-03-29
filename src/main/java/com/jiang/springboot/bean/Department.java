@@ -1,9 +1,11 @@
 package com.jiang.springboot.bean;
 
+import java.io.Serializable;
+
 /**
  * 部门实体类
  */
-public class Department {
+public class Department implements Serializable {
 
     private Integer id;
     private String departmentName;
